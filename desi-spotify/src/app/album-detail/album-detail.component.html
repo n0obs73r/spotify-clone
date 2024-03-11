@@ -1,0 +1,8 @@
+<div *ngIf="albumDetails">
+    <h1>{{ albumDetails.title }}</h1>
+    <h2>{{ albumDetails.artist }}</h2>
+    <ul>
+      <li *ngFor="let track of albumDetails.tracks">{{ track }}</li>
+    </ul>
+  </div>
+  

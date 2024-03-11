@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 	"os"
@@ -12,9 +13,10 @@ import (
 )
 
 type Album struct {
-	Title  string   `json:"title"`
-	Artist string   `json:"artist"`
-	Tracks []string `json:"tracks"`
+	Title   string   `json:"title"`
+	Artist  string   `json:"artist"`
+	Tracks  []string `json:"tracks"`
+	Artwork string   `json:"artwork,omitempty"`
 }
 
 func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
@@ -24,10 +26,9 @@ func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
 
 	albumsDir := "D:/Music/MP3"
 
-	albums := make([]Album, 0)
+	albumsMap := make(map[string]*Album)
 
 	err := filepath.Walk(albumsDir, func(path string, info os.FileInfo, err error) error {
-
 		if strings.HasSuffix(strings.ToLower(path), ".mp3") {
 
 			file, err := os.Open(path)
@@ -36,7 +37,7 @@ func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			defer file.Close()
 
-			mp3File, err := tag.ReadFrom(file)
+			metadata, err := tag.ReadFrom(file)
 			if err != nil {
 				if err != tag.ErrNoTagsFound {
 					return err
@@ -45,43 +46,41 @@ func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
 				title := filepath.Base(path)
 				artist := "Unknown Artist"
 
-				albums = append(albums, Album{
-					Title:  title,
-					Artist: artist,
-					Tracks: []string{title},
-				})
+				if _, exists := albumsMap[title]; !exists {
+					albumsMap[title] = &Album{
+						Title:  title,
+						Artist: artist,
+						Tracks: []string{title},
+					}
+				}
 
 				return nil
 			}
 
-			title := mp3File.Title()
-			artist := mp3File.Artist()
-			album := mp3File.Album()
+			title := metadata.Album()
+			artist := metadata.Artist()
 
-			var existingAlbum *Album
-			for i := range albums {
-				if albums[i].Title == album && albums[i].Artist == artist {
-					existingAlbum = &albums[i]
-					break
+			if _, exists := albumsMap[title]; !exists {
+				albumsMap[title] = &Album{
+					Title:   title,
+					Artist:  artist,
+					Artwork: getArtworkData(metadata),
 				}
-			}
-
-			if existingAlbum == nil {
-				albums = append(albums, Album{
-					Title:  album,
-					Artist: artist,
-					Tracks: []string{title},
-				})
 			} else {
-
-				existingAlbum.Tracks = append(existingAlbum.Tracks, title)
+				albumsMap[title].Tracks = append(albumsMap[title].Tracks, metadata.Title())
 			}
 		}
 		return nil
 	})
+
 	if err != nil {
 		http.Error(w, "Error reading albums", http.StatusInternalServerError)
 		return
+	}
+
+	var albums []Album
+	for _, album := range albumsMap {
+		albums = append(albums, *album)
 	}
 
 	if filter != "" {
@@ -94,6 +93,13 @@ func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(albums)
+}
+
+func getArtworkData(metadata tag.Metadata) string {
+	if artwork := metadata.Picture(); artwork != nil {
+		return base64.StdEncoding.EncodeToString(artwork.Data)
+	}
+	return ""
 }
 
 func filterAlbums(albums []Album, filter string) []Album {
@@ -111,12 +117,10 @@ func filterAlbums(albums []Album, filter string) []Album {
 func sortAlbums(albums []Album, sortBy string) {
 	switch sortBy {
 	case "title":
-
 		sort.Slice(albums, func(i, j int) bool {
 			return albums[i].Title < albums[j].Title
 		})
 	case "artist":
-
 		sort.Slice(albums, func(i, j int) bool {
 			return albums[i].Artist < albums[j].Artist
 		})
