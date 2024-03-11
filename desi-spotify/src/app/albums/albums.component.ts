@@ -40,8 +40,8 @@ export class AlbumComponent implements OnInit {
   
   showAlbumDetails(album: any) {
     if (album.title) {
-      const encodedTitle = encodeURIComponent(album.title);
-      this.router.navigate(['/album-detail', encodedTitle]);
+      const titleWithSpaces = decodeURIComponent(album.title); // Decode URI component to replace %20 with spaces
+      this.router.navigate(['/albums', titleWithSpaces, 'songs']); // Navigate to the desired route
     } else {
       console.error('Album title is undefined');
     }

@@ -1,9 +1,19 @@
 <div class="album-details">
-    <h1>{{ albumTitle }}</h1>
-    <ul>
-      <li *ngFor="let song of songs">
-        <span>{{ song.title }}</span> - <span>{{ song.artist }}</span>
-      </li>
-    </ul>
+  <div class="album-header">
+      <!-- <img src="{{ albumArt }}" alt="Album Art"> -->
+      <h1>{{ albumTitle.replace('%20', ' ') }}</h1>
+    </div>
+  <div class="song-list">
+      <ul>
+          <li *ngFor="let song of songs">
+              <div class="song-details">
+                  <!-- <img src="{{ song.artwork }}" alt="Song Artwork"> -->
+                  <div class="song-info">
+                      <span class="song-title">{{ song.title }}</span>
+                      <span class="song-artist">{{ song.artist }}</span>
+                  </div>
+              </div>
+          </li>
+      </ul>
   </div>
-  
+</div>

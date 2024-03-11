@@ -1,0 +1,58 @@
+.album-details {
+    background-color: #292929; // Dark background color
+    color: #ffffff; // Text color
+    padding: 20px;
+
+    .album-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+
+        img {
+            width: 200px; // Adjust the size as needed
+            height: auto;
+            margin-right: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+    }
+
+    .song-list {
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                margin-bottom: 10px;
+
+                .song-details {
+                    display: flex;
+                    align-items: center;
+
+                    img {
+                        width: 50px; // Adjust the size as needed
+                        height: 50px;
+                        margin-right: 10px;
+                    }
+
+                    .song-info {
+                        flex: 1;
+                    }
+
+                    .song-title {
+                        font-size: 18px;
+                    }
+
+                    .song-artist {
+                        font-size: 14px;
+                        color: #999999; // Lighter color for artist name
+                    }
+                }
+            }
+        }
+    }
+}
