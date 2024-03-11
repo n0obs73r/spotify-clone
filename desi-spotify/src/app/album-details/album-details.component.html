@@ -1,0 +1,9 @@
+<div class="album-details">
+    <h1>{{ albumTitle }}</h1>
+    <ul>
+      <li *ngFor="let song of songs">
+        <span>{{ song.title }}</span> - <span>{{ song.artist }}</span>
+      </li>
+    </ul>
+  </div>
+  

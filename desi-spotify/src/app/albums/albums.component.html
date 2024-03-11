@@ -1,9 +1,11 @@
 <div class="album-page">
   <div class="albums">
-    <div *ngFor="let album of albums" class="album" (click)="showAlbumDetails(album)">
-      <img [src]="album.artwork" alt="{{ album.title }}">
+    <div *ngFor="let album of albums" class="album">
+      <a (click)="showAlbumDetails(album)">
+        <img class="album-art" [src]="album.artwork" alt="{{ album.title }}">
       <h3>{{ album.title }}</h3>
       <p>{{ album.artist }}</p>
+    </a>
     </div>    
   </div>
 </div>

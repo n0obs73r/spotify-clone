@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AlbumDetailComponent } from './album-detail.component';
+import { AlbumDetailComponent } from './album-details.component';
 
-describe('AlbumDetailComponent', () => {
+describe('AlbumDetailsComponent', () => {
   let component: AlbumDetailComponent;
   let fixture: ComponentFixture<AlbumDetailComponent>;
 

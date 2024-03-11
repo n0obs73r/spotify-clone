@@ -39,6 +39,11 @@ export class AlbumComponent implements OnInit {
   }
   
   showAlbumDetails(album: any) {
-    this.router.navigate(['/album-detail', album.id]);
+    if (album.title) {
+      const encodedTitle = encodeURIComponent(album.title);
+      this.router.navigate(['/album-detail', encodedTitle]);
+    } else {
+      console.error('Album title is undefined');
+    }
   }
 }

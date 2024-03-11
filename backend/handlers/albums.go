@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -10,6 +12,8 @@ import (
 	"strings"
 
 	"github.com/dhowden/tag"
+	"github.com/disintegration/imaging"
+	"github.com/gorilla/mux"
 )
 
 type Album struct {
@@ -19,18 +23,17 @@ type Album struct {
 	Artwork string   `json:"artwork,omitempty"`
 }
 
-func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
-	query := r.URL.Query()
-	filter := query.Get("filter")
-	sortBy := query.Get("sort_by")
+func GetAlbumSongsHandler(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	albumTitle := params["title"]
 
-	albumsDir := "D:/Music/MP3"
-
-	albumsMap := make(map[string]*Album)
+	var songs []Song
+	var albumsDir = "D:/Music/MP3"
+	albumFound := false
 
 	err := filepath.Walk(albumsDir, func(path string, info os.FileInfo, err error) error {
+		// log.Println("Walking path:", path)
 		if strings.HasSuffix(strings.ToLower(path), ".mp3") {
-
 			file, err := os.Open(path)
 			if err != nil {
 				return err
@@ -39,31 +42,72 @@ func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
 
 			metadata, err := tag.ReadFrom(file)
 			if err != nil {
-				if err != tag.ErrNoTagsFound {
-					return err
+				if err == tag.ErrNoTagsFound {
+					// log.Printf("No tags found for file: %s\n", path)
+					return nil // Continue walking the directory
 				}
+				return err
+			}
+			if strings.Contains(metadata.Album(), albumTitle) {
+				println(metadata.Album())
+				albumFound = true
+				songs = append(songs, Song{
+					Title:  metadata.Title(),
+					Artist: metadata.Artist(),
+				})
+			}
+		}
+		return nil
+	})
 
-				title := filepath.Base(path)
-				artist := "Unknown Artist"
+	if err != nil {
+		http.Error(w, "Error reading songs", http.StatusInternalServerError)
+		// log.Println("Error walking directory:", err)
+		return
+	}
 
-				if _, exists := albumsMap[title]; !exists {
-					albumsMap[title] = &Album{
-						Title:  title,
-						Artist: artist,
-						Tracks: []string{title},
-					}
+	if !albumFound {
+		songs = append(songs, Song{
+			Title:  "Unknown",
+			Artist: "Unknown Artist",
+		})
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(songs)
+}
+
+func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
+	query := r.URL.Query()
+	filter := strings.ToLower(query.Get("filter"))
+	sortBy := query.Get("sort_by")
+
+	albumsDir := "D:/Music/MP3"
+	albumsMap := make(map[string]*Album)
+
+	err := filepath.Walk(albumsDir, func(path string, info os.FileInfo, err error) error {
+		if strings.HasSuffix(strings.ToLower(path), ".mp3") {
+			file, err := os.Open(path)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+
+			metadata, err := tag.ReadFrom(file)
+			if err != nil {
+				if err == tag.ErrNoTagsFound {
+					log.Printf("No tags found for file: %s\n", path)
+					return nil // Continue walking the directory
 				}
-
-				return nil
+				return err
 			}
 
-			title := metadata.Album()
-			artist := metadata.Artist()
+			title := strings.ToLower(metadata.Album())
 
 			if _, exists := albumsMap[title]; !exists {
 				albumsMap[title] = &Album{
-					Title:   title,
-					Artist:  artist,
+					Title:   metadata.Album(),
+					Artist:  metadata.Artist(),
 					Artwork: getArtworkData(metadata),
 				}
 			} else {
@@ -75,6 +119,7 @@ func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		http.Error(w, "Error reading albums", http.StatusInternalServerError)
+		log.Println("2) Error walking directory:", err)
 		return
 	}
 
@@ -97,7 +142,21 @@ func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
 
 func getArtworkData(metadata tag.Metadata) string {
 	if artwork := metadata.Picture(); artwork != nil {
-		return base64.StdEncoding.EncodeToString(artwork.Data)
+		img, err := imaging.Decode(bytes.NewReader(artwork.Data))
+		if err != nil {
+			log.Println("Error decoding image:", err)
+			return ""
+		}
+
+		resizedImg := imaging.Resize(img, 100, 100, imaging.Lanczos)
+
+		var buf bytes.Buffer
+		if err := imaging.Encode(&buf, resizedImg, imaging.PNG); err != nil {
+			log.Println("Error encoding image:", err)
+			return ""
+		}
+
+		return base64.StdEncoding.EncodeToString(buf.Bytes())
 	}
 	return ""
 }
