@@ -11,4 +11,5 @@ type Song struct {
 	Genre       string `json:"genre"`
 	Year        int    `json:"year"`
 	Duration    int    `json:"duration"` // Duration in seconds
+	FileName    string `json:"fileName"`
 }

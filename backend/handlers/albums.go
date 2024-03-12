@@ -58,11 +58,12 @@ func GetAlbumSongsHandler(w http.ResponseWriter, r *http.Request) {
 			if strings.Contains(metadata.Album(), albumTitle) {
 				albumFound = true
 				songs = append(songs, Song{
-					Title:  metadata.Title(),
-					Artist: metadata.Artist(),
-					Album:  metadata.Album(),
-					Genre:  metadata.Genre(),
-					Year:   metadata.Year(),
+					Title:    metadata.Title(),
+					Artist:   metadata.Artist(),
+					Album:    metadata.Album(),
+					Genre:    metadata.Genre(),
+					Year:     metadata.Year(),
+					FileName: filepath.Base(path),
 				})
 			}
 		}

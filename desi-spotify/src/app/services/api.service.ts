@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { Song } from '../models/song.model';
 
 @Injectable({
@@ -38,7 +38,13 @@ export class ApiService {
   getAlbumArt(title: string): Observable<Blob> {
     return this.http.get(`${this.apiUrl}/albums/${title}/art`, { responseType: 'blob' });
   }
+ 
   getAlbumSongs(title: string): Observable<Song[]> {
-    return this.http.get<Song[]>(`${this.apiUrl}/albums/${title}/songs`);
+    return this.http.get<Song[]>(`${this.apiUrl}/albums/${title}/songs`).pipe(
+      catchError(error => {
+        console.error('Error loading album songs:', error);
+        return throwError('Error loading album songs');
+      })
+    );
   }
 }

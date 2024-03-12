@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"backend/handlers"
 
@@ -46,7 +48,27 @@ func main() {
 	r.HandleFunc("/albums/{title}/art", handlers.GetAlbumArt).Methods("GET")
 	r.HandleFunc("/albums/{title}/songs", handlers.GetAlbumSongsHandler).Methods("GET")
 
-	r.PathPrefix("/songs/").Handler(http.StripPrefix("/songs/", http.FileServer(http.Dir("./mp3"))))
+	// Serve MP3 files from the specified directory under /songs endpoint
+	songsDir := "D:/Music/MP3"
+	songsHandler := http.StripPrefix("/songs/", http.FileServer(http.Dir(songsDir)))
+	r.PathPrefix("/songs/").Handler(songsHandler)
+
+	// Serve all MP3 files under /albums/songs endpoint
+	r.HandleFunc("/songs", func(w http.ResponseWriter, r *http.Request) {
+		err := filepath.Walk(songsDir, func(path string, info os.FileInfo, err error) error {
+			if err != nil {
+				return err
+			}
+			if !info.IsDir() && filepath.Ext(path) == ".mp3" {
+				w.Write([]byte(filepath.Base(path) + "\n"))
+			}
+			return nil
+		})
+		if err != nil {
+			http.Error(w, "Error reading songs", http.StatusInternalServerError)
+			return
+		}
+	}).Methods("GET")
 
 	n := negroni.Classic()
 	n.UseHandler(r)

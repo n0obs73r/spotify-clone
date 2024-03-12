@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { CommonModule } from '@angular/common';
+import { Song } from '../models/song.model'; // Import the Song interface
+
 
 @Component({
   selector: 'app-album-details',
@@ -30,12 +32,12 @@ export class AlbumDetailsComponent implements OnInit {
       (response: any[]) => {
         this.songs = response;
   
-        console.log('Songs:', this.songs); // Log the entire songs array
+        // console.log('Songs:', this.songs); // Log the entire songs array
   
         // Find the first song with artwork available
         const songWithArtwork = this.songs.find(song => song.artwork);
   
-        console.log('Song with artwork:', songWithArtwork); // Log the song with artwork
+        // console.log('Song with artwork:', songWithArtwork); // Log the song with artwork
   
         // If a song with artwork is found, assign its artwork URL to albumArt
         if (songWithArtwork) {
@@ -51,5 +53,15 @@ export class AlbumDetailsComponent implements OnInit {
     );
   }
   
-  
+  playSong(song: Song) {
+    // const audio = new Audio();
+    console.log(song)
+    const audioBaseURL = "http://localhost:8080/songs/"
+    const encodedFileName = encodeURIComponent(song.fileName).replace(/%26/g, '&');
+    const audioURL = audioBaseURL + encodedFileName;
+      const audio = new Audio(audioURL);
+      audio.play();
+    // console.log('Playing song:', audioBaseURL + encodeURIComponent(song.fileName).replace(/%20/g, ''));
+}
+
 }

@@ -6,4 +6,5 @@ export interface Song {
     genre: string;
     year: number;
     duration: number; 
+    fileName: string;
   }

@@ -7,7 +7,7 @@
   </div>
   <div class="song-list">
     <ul>
-      <li *ngFor="let song of songs">
+      <li *ngFor="let song of songs" (click)="playSong(song)">
         <div class="song-details">
           <div class="song-info">
             <div class="song-property">
