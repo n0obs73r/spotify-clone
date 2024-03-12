@@ -25,16 +25,24 @@ export class AlbumComponent implements OnInit {
   
   getAlbums() {
     this.apiService.getAlbums().subscribe((response: any[]) => {
-      this.albums = response.map((album: any) => {
-        let artworkSrc = album.artwork ? 'data:image/jpeg;base64,' + album.artwork : this.dummyImage;
-
-        return { 
-          title: album.title,
-          artist: album.artist,
-          tracks: album.tracks,
-          artwork: artworkSrc,
-        };
+      const uniqueAlbumsMap = new Map<string, any>();
+      
+      // Group albums by title
+      response.forEach((album: any) => {
+        const key = album.title;
+        if (!uniqueAlbumsMap.has(key)) {
+          uniqueAlbumsMap.set(key, {
+            title: album.title,
+            tracks: [],
+            artwork: album.artwork ? 'data:image/jpeg;base64,' + album.artwork : this.dummyImage
+          });
+        }
+        
+        const uniqueAlbum = uniqueAlbumsMap.get(key);
+        uniqueAlbum.tracks.push(album.tracks);
       });
+      
+      this.albums = Array.from(uniqueAlbumsMap.values());
     });
   }
   

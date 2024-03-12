@@ -2,57 +2,53 @@
     background-color: #292929; // Dark background color
     color: #ffffff; // Text color
     padding: 20px;
-
+  
     .album-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-
-        img {
-            width: 200px; // Adjust the size as needed
-            height: auto;
-            margin-right: 20px;
-        }
-
-        h1 {
-            font-size: 24px;
-            margin: 0;
-        }
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+  
+      h1 {
+        font-size: 24px;
+        margin: 0;
+        font-weight: bold; // Make the title bold
+      }
     }
-
+  
     .song-list {
-        ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-
-            li {
-                margin-bottom: 10px;
-
-                .song-details {
-                    display: flex;
-                    align-items: center;
-
-                    img {
-                        width: 50px; // Adjust the size as needed
-                        height: 50px;
-                        margin-right: 10px;
-                    }
-
-                    .song-info {
-                        flex: 1;
-                    }
-
-                    .song-title {
-                        font-size: 18px;
-                    }
-
-                    .song-artist {
-                        font-size: 14px;
-                        color: #999999; // Lighter color for artist name
-                    }
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+  
+        li {
+          margin-bottom: 10px;
+  
+          .song-details {
+            display: flex;
+            align-items: center;
+  
+            .song-info {
+              flex: 1;
+  
+              .song-property {
+                display: flex;
+                align-items: center;
+                margin-bottom: 5px;
+  
+                .property-label {
+                  font-weight: bold; // Make the property label bold
+                  margin-right: 10px;
                 }
+  
+                .property-value {
+                  color: #cccccc; // Lighter color for property value
+                }
+              }
             }
+          }
         }
+      }
     }
-}
+  }
+  

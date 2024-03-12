@@ -1,19 +1,26 @@
 <div class="album-details">
   <div class="album-header">
-      <!-- <img src="{{ albumArt }}" alt="Album Art"> -->
-      <h1>{{ albumTitle.replace('%20', ' ') }}</h1>
+    <h1>{{ albumTitle.replace('%20', ' ') }}</h1>
+    <div class="song-artwork">
+      <img [src]="albumArt" alt="Song Artwork">
     </div>
+  </div>
   <div class="song-list">
-      <ul>
-          <li *ngFor="let song of songs">
-              <div class="song-details">
-                  <!-- <img src="{{ song.artwork }}" alt="Song Artwork"> -->
-                  <div class="song-info">
-                      <span class="song-title">{{ song.title }}</span>
-                      <span class="song-artist">{{ song.artist }}</span>
-                  </div>
-              </div>
-          </li>
-      </ul>
+    <ul>
+      <li *ngFor="let song of songs">
+        <div class="song-details">
+          <div class="song-info">
+            <div class="song-property">
+              <span class="property-label">Title:</span>
+              <span class="property-value">{{ song.title }}</span>
+            </div>
+            <div class="song-property">
+              <span class="property-label">Artist:</span>
+              <span class="property-value">{{ song.artist }}</span>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
   </div>
 </div>
