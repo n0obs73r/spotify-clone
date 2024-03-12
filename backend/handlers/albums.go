@@ -57,6 +57,7 @@ func GetAlbumSongsHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if strings.Contains(metadata.Album(), albumTitle) {
 				albumFound = true
+				artwork := getArtworkData(metadata)
 				songs = append(songs, Song{
 					Title:    metadata.Title(),
 					Artist:   metadata.Artist(),
@@ -64,6 +65,7 @@ func GetAlbumSongsHandler(w http.ResponseWriter, r *http.Request) {
 					Genre:    metadata.Genre(),
 					Year:     metadata.Year(),
 					FileName: filepath.Base(path),
+					Artwork:  artwork, // Include the artwork
 				})
 			}
 		}

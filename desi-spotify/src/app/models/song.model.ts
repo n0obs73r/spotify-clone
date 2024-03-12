@@ -7,4 +7,5 @@ export interface Song {
     year: number;
     duration: number; 
     fileName: string;
+  artwork: string; 
   }
