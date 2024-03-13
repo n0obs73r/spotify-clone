@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { CommonModule } from '@angular/common';
-import { Song } from '../models/song.model'; // Import the Song interface
+import { Song } from '../models/song.model';
+import {PlayerService} from "../services/player.service"; // Import the Song interface
 
 
 @Component({
@@ -16,9 +17,13 @@ import { Song } from '../models/song.model'; // Import the Song interface
 export class AlbumDetailsComponent implements OnInit {
   albumTitle: string = '';
   songs: any[] = [];
-  dummyImage: string = 'assets/images/dummy.jpg'; 
-  albumArt: string = ''; 
-  constructor(private route: ActivatedRoute, private apiService: ApiService) { }
+  dummyImage: string = 'assets/images/dummy.jpg';
+  albumArt: string = '';
+
+  constructor(private route: ActivatedRoute, private apiService: ApiService,
+              private playerService: PlayerService
+  ) {
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
@@ -26,6 +31,7 @@ export class AlbumDetailsComponent implements OnInit {
       this.getAlbumSongs();
     });
   }
+
   getAlbumSongs() {
     this.apiService.getAlbumSongs(this.albumTitle).subscribe(
       (response: any[]) => {
@@ -42,15 +48,13 @@ export class AlbumDetailsComponent implements OnInit {
       }
     );
   }
-  
+
   playSong(song: Song) {
-    console.log(song)
-    const audioBaseURL = "http://localhost:8080/songs/"
+    const audioBaseURL = "http://localhost:8080/songs/";
     const encodedFileName = encodeURIComponent(song.fileName).replace(/%26/g, '&');
     const audioURL = audioBaseURL + encodedFileName;
-      const audio = new Audio(audioURL);
-      audio.play();
-    // console.log('Playing song:', audioBaseURL + encodeURIComponent(song.fileName).replace(/%20/g, ''));
-}
-
+    const audio = new Audio(audioURL);
+    this.playerService.setCurrentAudio(audio);
+    this.playerService.setPlaying(true);
+  }
 }

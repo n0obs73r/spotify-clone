@@ -25,6 +25,8 @@ type Album struct {
 	Artwork string   `json:"artwork,omitempty"`
 }
 
+const albumsDir = "/Users/ravi/Music"
+
 var (
 	albumsCache     []Album
 	cacheExpiration = 1 * time.Hour // Adjust cache expiration time as needed
@@ -37,7 +39,6 @@ func GetAlbumSongsHandler(w http.ResponseWriter, r *http.Request) {
 	albumTitle := params["title"]
 
 	var songs []Song
-	var albumsDir = "D:/Music/MP3"
 	albumFound := false
 
 	err := filepath.Walk(albumsDir, func(path string, info os.FileInfo, err error) error {
@@ -101,7 +102,7 @@ func GetAlbumsHandler(w http.ResponseWriter, r *http.Request) {
 	cacheMutex.RUnlock()
 
 	log.Println("Fetching albums from file system")
-	albums, err := fetchAlbums("D:/Music/MP3")
+	albums, err := fetchAlbums(albumsDir)
 	if err != nil {
 		http.Error(w, "Error reading albums", http.StatusInternalServerError)
 		log.Println("Error fetching albums:", err)

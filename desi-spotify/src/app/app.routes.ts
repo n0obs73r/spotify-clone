@@ -7,5 +7,4 @@ export const routes: Routes = [
     { path: 'home', component: HomeComponent },
     { path: 'albums', loadComponent: () => import('./albums/albums.component').then(mod => mod.AlbumComponent) },
     { path: 'albums/:title/songs', component: AlbumDetailsComponent }, // Route parameter :title for album title
-
 ];
