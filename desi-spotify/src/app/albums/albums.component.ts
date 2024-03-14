@@ -14,6 +14,8 @@ import { CommonModule } from '@angular/common';
 export class AlbumComponent implements OnInit {
   albums: any[] = [];
   dummyImage: string = 'assets/images/dummy.jpg';
+  currentPage: number = 1;
+  itemsPerPage: number = 18;
 
   constructor(private apiService: ApiService, private router: Router, private route: ActivatedRoute) { }
 
@@ -23,6 +25,7 @@ export class AlbumComponent implements OnInit {
     });
   }
 
+ 
   getAlbums() {
     this.apiService.getAlbums().subscribe((response: any[]) => {
       if (!response) {
@@ -57,5 +60,17 @@ export class AlbumComponent implements OnInit {
     } else {
       console.error('Album title is undefined');
     }
+  }
+
+  onPageChange(pageNumber: number) {
+    this.currentPage = pageNumber;
+  }
+  getTotalPages(): number {
+    return Math.ceil(this.albums.length / this.itemsPerPage);
+  }  
+
+  getDisplayedAlbums(): any[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.albums.slice(startIndex, startIndex + this.itemsPerPage);
   }
 }

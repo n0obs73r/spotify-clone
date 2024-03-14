@@ -1,0 +1,9 @@
+.controls-section-container {
+    position: fixed; /* Stick the controls section */
+    bottom: 0; /* Align it to the bottom */
+    left: 0; /* Align it to the left */
+    width: 100%; /* Take up full width */
+    background-color: #fff; /* Set background color */
+    padding: 10px; /* Add padding for spacing */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Add a shadow to separate it from content */
+  }

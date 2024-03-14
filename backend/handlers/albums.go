@@ -25,7 +25,7 @@ type Album struct {
 	Artwork string   `json:"artwork,omitempty"`
 }
 
-const albumsDir = "/Users/ravi/Music"
+const albumsDir = "D:/Music/downloads"
 
 var (
 	albumsCache     []Album

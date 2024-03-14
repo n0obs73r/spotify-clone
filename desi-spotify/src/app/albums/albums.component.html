@@ -1,11 +1,16 @@
 <div class="album-page">
   <div class="albums">
-    <div *ngFor="let album of albums" class="album">
+    <div *ngFor="let album of getDisplayedAlbums()" class="album">
       <a (click)="showAlbumDetails(album)">
         <img class="album-art" [src]="album.artwork" alt="{{ album.title }}">
-      <h3>{{ album.title }}</h3>
-      <p>{{ album.artist }}</p>
-    </a>
-    </div>    
+        <h3>{{ album.title }}</h3>
+        <p>{{ album.artist }}</p>
+      </a>
+    </div>
+  </div>
+  <div class="pagination">
+    <button (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
+    <span>{{ currentPage }} of {{ getTotalPages() }}</span>
+    <button (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === getTotalPages()">Next</button>
   </div>
 </div>

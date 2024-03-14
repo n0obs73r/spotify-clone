@@ -50,11 +50,6 @@ export class AlbumDetailsComponent implements OnInit {
   }
 
   playSong(song: Song) {
-    const audioBaseURL = "http://localhost:8080/songs/";
-    const encodedFileName = encodeURIComponent(song.fileName).replace(/%26/g, '&');
-    const audioURL = audioBaseURL + encodedFileName;
-    const audio = new Audio(audioURL);
-    this.playerService.setCurrentAudio(audio);
-    this.playerService.setPlaying(true);
+    this.playerService.playSongService(song);
   }
 }

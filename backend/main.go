@@ -49,7 +49,7 @@ func main() {
 	r.HandleFunc("/albums/{title}/songs", handlers.GetAlbumSongsHandler).Methods("GET")
 
 	// Serve MP3 files from the specified directory under /songs endpoint
-	songsDir := "/Users/ravi/Music"
+	songsDir := "D:/Music/downloads"
 	songsHandler := http.StripPrefix("/songs/", http.FileServer(http.Dir(songsDir)))
 	r.PathPrefix("/songs/").Handler(songsHandler)
 

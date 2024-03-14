@@ -1,18 +1,38 @@
 .album-page {
-    .albums {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-    .album {
-      width: 30%;
-      margin-bottom: 20px;
-      cursor: pointer;
-      text-align: center;
-    }
-    .album img {
-      width: 100px;
-      height: 100px;
-      border-radius: 8px;
-    }
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the page takes up at least the height of the viewport */
+  padding-bottom: 100px; /* Add padding to the bottom to accommodate the player controls */
+
+  .albums {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    flex: 1; /* Allow albums to take up remaining space */
+    overflow-y: auto; /* Enable scrolling if content overflows */
   }
+
+  .album {
+    width: 30%;
+    margin-bottom: 20px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .album img {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+  }
+
+  .pagination {
+    position: fixed; /* Position the pagination section */
+    bottom: 80px; /* Stick it to the bottom with some space above the player controls */
+    left: 0; /* Align it to the left */
+    width: 100%; /* Take up full width */
+    background-color: #fff; /* Set background color */
+    padding: 10px; /* Add padding for spacing */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); /* Add a shadow to separate it from content */
+    z-index: 1; /* Ensure the pagination stays above other content */
+  }
+}

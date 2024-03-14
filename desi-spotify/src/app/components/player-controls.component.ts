@@ -33,4 +33,12 @@ export class PlayerControlsComponent {
   togglePlayPause() {
     this.playerService.togglePlaying();
   }
+
+  playNextSong() {
+    this.playerService.playNextSong();
+  }
+
+  playPreviousSong() {
+    this.playerService.playPreviousSong();
+  }
 }
