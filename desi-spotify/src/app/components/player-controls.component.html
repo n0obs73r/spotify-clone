@@ -28,12 +28,10 @@
     </div>
 
     <div class="progress-bar-container">
-      <div>3:10</div>
-      <div class="progress-bar" (click)="handleProgressBarClick($event)">
-        <div class="current-progress" [style.width]="currentProgress.toString() + '%'"></div>
-        <div class="thumb"></div>
-      </div>
-      <div>4:39</div>
+      <div class="start-time">{{ startTime }}</div>
+      <input type="range" class="progress-bar" [value]="currentProgress" (input)="handleProgressBarInput($event)" />
+      <div class="end-time">{{ endTime }}</div>
     </div>
-  </div>
+    
+    
 </div>
